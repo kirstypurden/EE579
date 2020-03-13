@@ -2,6 +2,8 @@
 //Connections to the Arduino Microcontroller
 int taosOutPin = 9;
 int LED = 7;
+int input = 0;
+int before, after = 0, 0;
 
 void setup() 
 {
@@ -12,12 +14,55 @@ void setup()
   delay(100); //wait for it to set up (100 ms)
 }
 
+Serial.print("Pressl n to take no light reading."); //Print no light reading message
 void loop() //loop forever
-{
-  detectColor(taosOutPin);//see what colour we're detecting
-  Serial.print("\n");
-  delay(1000); //wait 1000 ms before reading again
+{ 
+
+  if (Serial.available() > 0) 
+  {
+      input = Serial.read();
+
+      //Take no light reading
+      if(input == 110) //n
+      {
+          before = detectColor(taosOutPin);//see what colour we're detecting
+          Serial.print("Pressl l to take no light reading."); //Print light reading message
+      }
+
+      //Take light reading and display result
+      if(input==108) //input=l
+      {
+        after = detectColor(taosOutPin);
+  
+        int difference, percentage_drop;
+        difference = before - after;
+        percentage_drop = difference/before;
+
+        Serial.print("Before: ");
+        Serial.print(before);
+        Serial.print("\n");
+        Serial.print("After: ");
+        Serial.print(after);
+        Serial.print("\n");
+        Serial.print("Percentage_drop: ");
+        Serial.print(percentage_drop);
+        Serial.print("\n");
+  
+
+        if(percentage_drop<0.15)
+        {
+          Serial.print("Skittle is black");
+        }
+        if(percentage_drop>30)
+        {
+          Serial.print("Skittle is white");
+        }
+        Serial.print("Pressl n to take no light reading."); //Print no light reading message
+        //delay(1000); //wait 1000 ms before reading again
+      }
+  }
 }
+
 
 int detectColor(int taosOutPin)
 {
@@ -47,8 +92,9 @@ int detectColor(int taosOutPin)
     digitalWrite(LED, LOW);
   }
   
-  Serial.print("colour: ");
-  Serial.println(readPulse); //display result of colour sensor (the output frequency)
+ // Serial.print("colour: ");
+  //Serial.println(readPulse); //display result of colour sensor (the output frequency)
+  return readPulse;
 }
 
 
