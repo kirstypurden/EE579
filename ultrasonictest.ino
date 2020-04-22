@@ -6,6 +6,9 @@
 #define led 11 #pin to set the red led high when something is too close to the sensor 
 #define led2 10 #pin to set the green led high when something is a good distance from the sensor
 
+#******Define what a "safe distance" is for detecting an object and acting upon it*******
+int safe_dist = 20; #for testing, choose different values, in final car, will need to see how long it needs to stop without hitting the skittles
+
 #*****Set-up the arudino for use**********
 void setup() 
 {
@@ -34,7 +37,7 @@ void loop()
   
   distance = (duration/2) / 29.1; //from datasheet, to get distance in cm need to (time/58), which can also be represented as (time/2)/29
   
-  if (distance < 20) # if something is within a certain distance of the sensor
+  if (distance < safe_dist) # if something is within a certain distance of the sensor
   {
 	#Do something
 	#in this case, we turn on the red led, and turn the green LED off
